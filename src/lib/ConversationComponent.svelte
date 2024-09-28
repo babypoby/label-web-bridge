@@ -3,16 +3,18 @@
     import SelectButton from "./SelectButton.svelte";
     import { onMount, afterUpdate } from "svelte";
     import { page } from '$app/stores';
+    import type { Database } from "./supabase-types";
 
 
     export let conversation;
+    
 
-    const supabase = createClient(
+    const supabase = createClient<Database>(
         "https://jryeokpjkidbgzscmrcj.supabase.co",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyeWVva3Bqa2lkYmd6c2NtcmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5ODQ3NjIsImV4cCI6MjA0MTU2MDc2Mn0.nLeYIrrnbkSVqKeY7XOZkgHxDYwDcQOSVwmzrZgQrMo",
     );
 
-    let rubric_1, rubric_2, rubric_3, rubric_4;
+    let rubric_1, rubric_2, rubric_3, rubric_4 = null;
 
     function resetRatings() {
         rubric_1 = null;
