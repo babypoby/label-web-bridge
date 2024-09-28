@@ -38,42 +38,53 @@
     }
 
     async function getNextRandomUnratedConversation() {
-        if (
-            !confirm(
-                "Are you sure? You won't be able to change your answers after this.",
-            )
-        ) {
-            return;
-        }
-
-        try {
-            console.log("Fetching unrated conversations...");
-            const { data, error } = await supabase
-                .from("bridge")
-                .select("conversation_id")
-                .is("explains_concepts_0", null).is("identifies_goal_1", null);
-
-            if (error) {
-                console.error("Supabase error:", error);
-                throw error;
-            }
-
-            console.log("Fetched data:", data);
-
-            if (data && data.length > 0) {
-                const randomIndex = Math.floor(Math.random() * data.length);
-                const conversationId = data[randomIndex].conversation_id;
-                console.log("Navigating to:", conversationId);
-                await goto(`/conversation/${conversationId}`);
-            } else {
-                console.log("No unrated conversations found");
-                alert("No more unrated conversations available.");
-            }
-        } catch (error) {
-            console.error("Error in getNextRandomUnratedConversation:", error);
-            alert("An error occurred while fetching the next conversation.");
-        }
+    if (!confirm("Are you sure? You won't be able to change your answers after this.")) {
+        return;
     }
+
+    try {
+        console.log("Fetching unrated conversations...");
+        
+        const user = $page.data.session.user;
+        
+        const { data, error } = await supabase
+            .from('bridge')
+            .select('conversation_id, rating:rating(count)')
+            .not('conversation_id', 'in', 
+                supabase
+                    .from('rating')
+                    .select('conversation_id')
+                    .eq('user_id', user.id)
+            )
+            .order('rating.count')  // This will put NULL counts (no ratings) first
+            .limit(100);  // Limit to prevent fetching too much data
+
+        if (error) {
+            console.error("Supabase error:", error);
+            throw error;
+        }
+
+        console.log("Fetched data:", data);
+
+        // Filter to keep only conversations with 0, 1, or 2 ratings
+        const eligibleConversations = data.filter(conv => 
+            conv.rating.count === null || conv.rating.count < 3
+        );
+
+        if (eligibleConversations.length > 0) {
+            const randomIndex = Math.floor(Math.random() * eligibleConversations.length);
+            const conversationId = eligibleConversations[randomIndex].conversation_id;
+            console.log("Navigating to:", conversationId);
+            await goto(`/conversation/${conversationId}`);
+        } else {
+            console.log("No unrated conversations found");
+            alert("No more unrated conversations available.");
+        }
+    } catch (error) {
+        console.error("Error in getNextRandomUnratedConversation:", error);
+        alert("An error occurred while fetching the next conversation.");
+    }
+}
 
     function goToHome() {
         goto("/");

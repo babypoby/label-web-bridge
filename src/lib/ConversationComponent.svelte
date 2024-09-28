@@ -2,6 +2,8 @@
     import { createClient } from "@supabase/supabase-js";
     import SelectButton from "./SelectButton.svelte";
     import { onMount, afterUpdate } from "svelte";
+    import { page } from '$app/stores';
+
 
     export let conversation;
 
@@ -10,28 +12,13 @@
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyeWVva3Bqa2lkYmd6c2NtcmNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU5ODQ3NjIsImV4cCI6MjA0MTU2MDc2Mn0.nLeYIrrnbkSVqKeY7XOZkgHxDYwDcQOSVwmzrZgQrMo",
     );
 
-    let explains_concepts_0,
-        explains_concepts_1,
-        inspires_interest_0,
-        inspires_interest_1,
-        monitors_motivation_0,
-        monitors_motivation_1,
-        speaks_encouragingly_0,
-        speaks_encouragingly_1,
-        identifies_goal_0,
-        identifies_goal_1;
+    let rubric_1, rubric_2, rubric_3, rubric_4;
 
     function resetRatings() {
-        explains_concepts_0 = null;
-        explains_concepts_1 = null;
-        inspires_interest_0 = null;
-        inspires_interest_1 = null;
-        monitors_motivation_0 = null;
-        monitors_motivation_1 = null;
-        speaks_encouragingly_0 = null;
-        speaks_encouragingly_1 = null;
-        identifies_goal_0 = null;
-        identifies_goal_1 = null;
+        rubric_1 = null;
+        rubric_2 = null;
+        rubric_3 = null;
+        rubric_4 = null;
     }
 
     $: {
@@ -41,46 +28,55 @@
     }
 
     $: isFormComplete =
-        explains_concepts_0 !== null &&
-        explains_concepts_1 !== null &&
-        inspires_interest_0 !== null &&
-        inspires_interest_1 !== null &&
-        monitors_motivation_0 !== null &&
-        monitors_motivation_1 !== null &&
-        speaks_encouragingly_0 !== null &&
-        speaks_encouragingly_1 !== null &&
-        identifies_goal_0 !== null &&
-        identifies_goal_1 !== null;
+    rubric_1 !== null &&
+    rubric_2 !== null &&
+    rubric_3 !== null &&
+    rubric_4 !== null;
+
+   
+
+    let user;
+
+    $: user = $page.data.session?.user;
 
     async function submitRating() {
-        if (!isFormComplete) {
-            alert("Please complete all ratings before submitting.");
-            return;
-        }
-
-        const { data, error } = await supabase
-            .from("bridge")
-            .update({
-                explains_concepts_0,
-                explains_concepts_1,
-                inspires_interest_0,
-                inspires_interest_1,
-                monitors_motivation_0,
-                monitors_motivation_1,
-                speaks_encouragingly_0,
-                speaks_encouragingly_1,
-                identifies_goal_0,
-                identifies_goal_1,
-            })
-            .eq("conversation_id", conversation.conversation_id);
-
-        if (error) {
-            console.error("Error updating rating:", error);
-            alert("Error updating rating. Please try again.");
-        } else {
-            alert("Rating submitted successfully!");
-        }
+    if (!user) {
+        alert("You must be logged in to submit a rating.");
+        return;
     }
+
+    if (!isFormComplete) {
+        alert("Please complete all ratings before submitting.");
+        return;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from("rating")
+            .upsert({
+                conversation_id: conversation.conversation_id,
+                user_id: user.id,
+                rubric_1,
+                rubric_2,
+                rubric_3,
+                rubric_4,
+            })
+            .select();
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            alert("Rating submitted successfully!");
+        } else {
+            throw new Error("No data returned after upsert");
+        }
+    } catch (error) {
+        console.error("Error submitting rating:", error);
+        alert("Error submitting rating. Please try again.");
+    }
+}
+
+     
 
     onMount(() => {
         resetRatings();
@@ -109,7 +105,7 @@
             attribute.
         </p>
 
-        <div class="attribute">
+        <!--<div class="attribute">
             <p>
                 Explains the underlying concepts or skills in a clear way that
                 is easy for the student to understand
@@ -122,7 +118,7 @@
                 <span>Actually demonstrates:</span>
                 <SelectButton bind:value={explains_concepts_1} />
             </div>
-        </div>
+        </div>-->
 
         <div class="attribute">
             <p>
@@ -130,11 +126,11 @@
             </p>
             <div class="rating-row">
                 <span>Should demonstrate:</span>
-                <SelectButton bind:value={inspires_interest_0} />
+                <SelectButton bind:value={rubric_1} />
             </div>
             <div class="rating-row">
                 <span>Actually demonstrates:</span>
-                <SelectButton bind:value={inspires_interest_1} />
+                <SelectButton bind:value={rubric_2} />
             </div>
         </div>
 
@@ -145,15 +141,15 @@
             </p>
             <div class="rating-row">
                 <span>Should demonstrate:</span>
-                <SelectButton bind:value={monitors_motivation_0} />
+                <SelectButton bind:value={rubric_3} />
             </div>
             <div class="rating-row">
                 <span>Actually demonstrates:</span>
-                <SelectButton bind:value={monitors_motivation_1} />
+                <SelectButton bind:value={rubric_4} />
             </div>
         </div>
 
-        <div class="attribute">
+        <!--<div class="attribute">
             <p>
                 Delivers feedback (whether positive or negative) in an
                 encouraging way
@@ -178,7 +174,7 @@
                 <span>Actually demonstrates:</span>
                 <SelectButton bind:value={identifies_goal_1} />
             </div>
-        </div>
+        </div>-->
     </div>
     <div class="button-container">
         <button on:click={submitRating} disabled={!isFormComplete}
@@ -240,7 +236,7 @@
     }
     button:disabled {
         background-color: #cccccc;
-        cursor: not-allowergb(155, 155, 155);        
+        cursor: not-allowergb(155, 155, 155);
         color: white;
     }
 
