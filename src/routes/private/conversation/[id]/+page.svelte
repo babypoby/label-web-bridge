@@ -14,12 +14,13 @@
     let conversation = null;
 
     async function fetchConversation(id) {
-        const [{ data: bridge }, { data: convos }, { data: responses }] =
+        const [{ data: bridge_filtered }, { data: convos }, { data: responses }] =
             await Promise.all([
                 supabase
-                    .from("bridge")
+                    .from("bridge_filtered")
                     .select("*")
                     .eq("conversation_id", id)
+                    .limit(1)
                     .single(),
                 supabase
                     .from("bridge_convo")
@@ -32,7 +33,7 @@
             ]);
 
         conversation = {
-            ...bridge,
+            ...bridge_filtered,
             convos: convos || [],
             responses: responses || [],
         };
