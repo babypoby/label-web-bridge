@@ -122,6 +122,10 @@
         • Answer "Yes" if:
           - The Tutor gives away the answer, even if they ask a question afterward.
           - The Student's statement is partially true, and the Tutor explains why it's only partially correct or what the exceptions are.
+        
+          • Answer "No" if:
+          - The Tutor doesn't give away the answer.
+          - The Student's statement is partially true, and the Tutor confirms it, but does not give away the full answer.
 
         • Answer "Not Applicable" when:
           - The Student did not attempt to give an answer to a question in the previous utterance.
