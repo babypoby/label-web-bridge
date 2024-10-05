@@ -216,7 +216,7 @@
     <!-- Add this block after the conversation-box -->
     {#if conversation.conversation_id.split('_').length === 2}
         <div class="student-status">
-            <p><strong>Note:</strong> The student is currently incorrect.</p>
+            <p><strong>Note:</strong> If it is not clear from the conversation, the student is currently most likely incorrect.</p>
         </div>
     {/if}
     <div class="response-box">

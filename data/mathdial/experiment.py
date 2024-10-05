@@ -34,7 +34,7 @@ async def main():
     seen_conversation_ids = set()
     count = 0
 
-    with open('test.jsonl', 'r') as file:
+    with open('train.jsonl', 'r') as file:
         for line in file:
             data = json.loads(line)
             qid = data['qid']
