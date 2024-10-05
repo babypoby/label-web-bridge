@@ -28,11 +28,11 @@
                         .limit(1)
                         .single(),
                     supabase
-                        .from("bridge_convo")
+                        .from("bridge_convo_copy")
                         .select("*")
                         .eq("conversation_id", id),
                     supabase
-                        .from("bridge_response")
+                        .from("bridge_response_copy")
                         .select("*")
                         .eq("conversation_id", id),
                 ]);
