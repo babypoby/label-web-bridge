@@ -77,7 +77,7 @@ async def main():
                             })
                             response_added = True
                             break  # Stop processing after adding the response
-                    elif part.startswith("Student:"):
+                    elif not part.startswith("Teacher:"):
                         user = "student"
                         text = remove_specific_parentheses(part[8:].strip())
                         entries_bridge_convo_copy.append({

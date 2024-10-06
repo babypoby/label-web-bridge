@@ -2,7 +2,7 @@
     import { createClient } from "@supabase/supabase-js";
     import { page } from "$app/stores";
     import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
+    import { afterNavigate, goto } from "$app/navigation";
     import ConversationComponent from "$lib/ConversationComponent.svelte";
     import type { Database } from "$lib/supabase-types";
     import { fetchRandomConversation } from "$lib";
@@ -100,6 +100,10 @@
 
     onMount(() => {
         initializeData();
+    });
+
+    afterNavigate(() => {
+       fetchRatedConversationsCount()
     });
 
     $: if ($page.params.id) {
