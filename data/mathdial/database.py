@@ -54,7 +54,7 @@ async def main():
                     if part.startswith("Teacher:"):
                         user = "tutor"
                         text = remove_text_in_parentheses(part[8:].strip())
-                    elif part.startswith("Student:"):
+                    elif not part.startswith("Teacher:"):
                         user = "student"
                         text = remove_text_in_parentheses(part[8:].strip())
                     else:
