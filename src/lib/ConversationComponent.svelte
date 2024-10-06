@@ -130,6 +130,7 @@
         • Answer "Not Applicable" when:
           - The Student did not attempt to give an answer to a question in the previous utterance.
           - The Teacher confirms that the Student is correct.
+          - It is not clear whether the Student made a mistake.
         `,
         `
         The Tutor must promote active engagement from the Student. This can be done by:
@@ -159,12 +160,15 @@
         `
         The Tutor must point out the Student's mistake when the Student's statement contains a mistake.
 
-        • Answer "Yes" if: The Tutor points out the mistake.
+        • Answer "Yes" if: 
+          - The Tutor points out the mistake or opportunities for improvement.
+          - The Tutor identifies and addresses the Student's misconceptions.
 
         • Answer "No" if:
           - The Tutor states that the Student's statement is right even though it is not
           - The Tutor does not point out the mistake directly or not at all.
-          - The Tutor gives the right answer without pointing out what was wrong
+          - The Tutor gives the right answer without pointing out what was wrong.
+          - The Tutor states that the Student's statement is wrong without pointing out what was wrong.
 
         • Answer "Not Applicable" if:
           - It is not clear whether the Student made a mistake
