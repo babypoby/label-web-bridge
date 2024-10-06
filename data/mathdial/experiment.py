@@ -21,7 +21,7 @@ async def insert_data(table, data):
     return await loop.run_in_executor(None, lambda: supabase.table(table).insert(data).execute())
 
 def remove_specific_parentheses(text):
-    return re.sub(r'\s*\((focus|generic|probing)\)\s*', '', text).strip()
+    return re.sub(r'\s*\((focus|generic|probing|telling)\)\s*', '', text).strip()
 
 
 async def main():
@@ -34,7 +34,7 @@ async def main():
     seen_conversation_ids = set()
     count = 0
 
-    with open('train.jsonl', 'r') as file:
+    with open('test.jsonl', 'r') as file:
         for line in file:
             data = json.loads(line)
             qid = data['qid']
@@ -51,40 +51,35 @@ async def main():
                 conversation = data['conversation']
                 parts = conversation.split("|EOM|")
                 
-                teacher_parts = []
-                student_seen = False
                 convo_id = 0
+                first_student_seen = False
+                response_added = False
                 
                 for part in parts:
                     part = part.strip()
                     if part.startswith("Teacher:"):
                         user = "tutor"
                         text = remove_specific_parentheses(part[8:].strip())
-                        if not student_seen:
-                            teacher_parts.append({"user": user, "text": text})
-                        else:
+                        if not first_student_seen:
+                            entries_bridge_convo_copy.append({
+                                "conversation_id": conversation_id,
+                                "id": convo_id,
+                                "user": user,
+                                "text": text
+                            })
+                            convo_id += 1
+                        elif not response_added:
                             entries_bridge_response_copy.append({
                                 "conversation_id": conversation_id,
                                 "id": 0,
                                 "user": user,
                                 "text": text
                             })
-                            break
+                            response_added = True
+                            break  # Stop processing after adding the response
                     elif part.startswith("Student:"):
                         user = "student"
                         text = remove_specific_parentheses(part[8:].strip())
-                        student_seen = True
-                        # Add all accumulated teacher parts to convo
-                        for teacher_part in teacher_parts:
-                            entries_bridge_convo_copy.append({
-                                "conversation_id": conversation_id,
-                                "id": convo_id,
-                                "user": teacher_part["user"],
-                                "text": teacher_part["text"]
-                            })
-                            convo_id += 1
-                        teacher_parts = []
-                        # Add student part to convo
                         entries_bridge_convo_copy.append({
                             "conversation_id": conversation_id,
                             "id": convo_id,
@@ -92,12 +87,17 @@ async def main():
                             "text": text
                         })
                         convo_id += 1
+                        first_student_seen = True
                     else:
                         continue
                 
                 seen_conversation_ids.add(conversation_id)
 
     print(f"New unique conversation IDs to be inserted: {count}")
+
+
+
+    # ... (rest of the code remains the same)
 
     if entries_bridge_copy:
         try:
