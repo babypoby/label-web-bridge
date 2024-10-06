@@ -16,6 +16,7 @@
     let conversation = null;
     let ratedConversations = 0;
     let loading = true;
+    let showBigRewardNotification = false;
 
     async function fetchConversation(id) {
         loading = true;
@@ -84,6 +85,39 @@
         });
     }
 
+    function triggerBigReward() {
+        const duration = 15 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function() {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: ['#ff0000', '#00ff00', '#0000ff'],
+                emojis: ['🎉', '🎊', '🥳', '🎈'],
+            }));
+            confetti(Object.assign({}, defaults, { 
+                particleCount, 
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: ['#ff0000', '#00ff00', '#0000ff'],
+                emojis: ['🎉', '🎊', '🥳', '🎈'],
+            }));
+        }, 250);
+    }
+
     async function fetchRatedConversationsCount() {
         const user = $page.data.session?.user;
         if (!user) return;
@@ -96,9 +130,11 @@
         if (error) {
             console.error("Error fetching rated conversations count:", error);
         } else {
-
             const newCount = count || 0;
-            if (newCount%10 == 0) {
+            if (newCount % 100 === 0 && newCount > 0) {
+                triggerBigReward();
+                showBigRewardNotification = true;
+            } else if (newCount % 10 === 0 && newCount > 0) {
                 triggerConfetti();
             }
             ratedConversations = newCount;
@@ -123,6 +159,12 @@
     $: if ($page.params.id) {
         fetchConversation($page.params.id);
     }
+
+    $: if (showBigRewardNotification) {
+        setTimeout(() => {
+            showBigRewardNotification = false;
+        }, 5000); // Hide after 5 seconds
+    }
 </script>
 
 <div class="container">
@@ -142,9 +184,13 @@
             Next random unrated conversation
         </button>
     </div>
+
+    {#if showBigRewardNotification}
+        <div class="big-reward-notification">
+            Wow! You've rated {ratedConversations} conversations! 🎉
+        </div>
+    {/if}
 </div>
-
-
 
 <style>
     .container {
@@ -186,10 +232,31 @@
 
     .nav-button:hover {
         background-color: #3062d7;
-    
     }
 
     .nav-button:active {
         background-color: #1849ba;
+    }
+
+    .big-reward-notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #FFD700;
+        color: #000;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        animation: bounceIn 0.5s;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: translateX(-50%) scale(0.1); opacity: 0; }
+        60% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        100% { transform: translateX(-50%) scale(1); }
     }
 </style>
