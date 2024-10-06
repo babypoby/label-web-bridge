@@ -7,6 +7,7 @@
     import type { Database } from "$lib/supabase-types";
     import { fetchRandomConversation } from "$lib";
     import ProgressBar from "$lib/ProgressBar.svelte";
+    import confetti from 'canvas-confetti';
 
     export let data;
 
@@ -75,6 +76,14 @@
         goto("/");
     }
 
+    function triggerConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+
     async function fetchRatedConversationsCount() {
         const user = $page.data.session?.user;
         if (!user) return;
@@ -87,7 +96,12 @@
         if (error) {
             console.error("Error fetching rated conversations count:", error);
         } else {
-            ratedConversations = count || 0;
+
+            const newCount = count || 0;
+            if (newCount%10 == 0) {
+                triggerConfetti();
+            }
+            ratedConversations = newCount;
         }
     }
 
