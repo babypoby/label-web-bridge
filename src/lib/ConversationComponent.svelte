@@ -281,6 +281,15 @@
             </div>
         </div>
     {/if}
+    {#if conversation.lesson_topic}
+
+        <div class="question-solution-box">
+            <div class="question">
+                <h3>Lesson Topic:</h3>
+                <p>{conversation.lesson_topic}</p>
+            </div>
+        </div>
+    {/if}
     <div class="conversation-box">
         <h3>Conversation</h3>
         {#each conversation.convos as convo}
