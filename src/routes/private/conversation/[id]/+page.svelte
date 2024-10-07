@@ -67,6 +67,10 @@
                 goto(`/private/conversation/${conversationId}`);
             }
             
+            else if (conversationId === null ){
+                await fetchRatedConversationsCount();
+            }
+            
         } catch (error) {
             console.error("Error in getNextRandomUnratedConversation:", error);
             alert("An error occurred while fetching the next conversation.");
@@ -163,7 +167,7 @@
     $: if (showBigRewardNotification) {
         setTimeout(() => {
             showBigRewardNotification = false;
-        }, 5000); // Hide after 5 seconds
+        }, 3000); // Hide after 5 seconds
     }
 </script>
 

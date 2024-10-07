@@ -53,6 +53,7 @@
             return;
         }
 
+
         try {
             const { data, error } = await supabase
                 .from("rating")
