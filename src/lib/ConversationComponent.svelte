@@ -276,7 +276,7 @@
                 <p>{conversation.question}</p>
             </div>
             <div class="solution">
-                <h3>Solution:</h3>
+                <h3>Correct Solution:</h3>
                 <p>{conversation.solution}</p>
             </div>
         </div>
