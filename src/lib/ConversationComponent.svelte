@@ -307,6 +307,14 @@
             </p>
         </div>
     {/if}
+    {#if conversation.conversation_id.split("_").length !== 2}
+    <div class="student-status">
+        <p>
+            <strong>Note:</strong> In this class there may be a white board which both the student and tutor can use and see.
+        </p>
+    </div>
+    {/if}
+
     <div class="response-box">
         <h3>Tutor Response:</h3>
         {#each conversation.responses as response}
