@@ -167,6 +167,7 @@
         • Answer "Yes" if: 
           - The Tutor points out the mistake or opportunities for improvement.
           - The Tutor identifies and addresses the Student's misconceptions.
+          - The Tutor asks a question which directly draws attention to the mistake.
 
         • Answer "No" if:
           - The Tutor states that the Student's statement is right even though it is not
