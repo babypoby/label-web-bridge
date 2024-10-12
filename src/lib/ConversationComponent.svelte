@@ -134,7 +134,7 @@
         • Answer "Not Applicable" when:
           - The Student did not attempt to give an answer to a question in the previous utterance.
           - The Teacher confirms that the Student is correct.
-          - It is not clear whether the Student made a mistake.
+          - It is not clear whether the Student made a mistake or the Student is correct.
         `,
             `
         The Tutor must promote active engagement from the Student. This can be done by:

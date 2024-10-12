@@ -10,8 +10,10 @@
     let eligibleConversations = [];
     let conversation_id = null;
 
+    const user = $page.data.session?.user;
+
     async function fetchData() {
-        const user = $page.data.session?.user;
+        
         data.supabase
         conversation_id = await fetchRandomConversation(data.supabase, user)
     }
@@ -34,6 +36,7 @@
     {:else if eligibleConversations.length === 0}
         <p>Loading data...</p>
     {:else}
+
         <p>No eligible conversations available.</p>
     {/if}
 </main>
