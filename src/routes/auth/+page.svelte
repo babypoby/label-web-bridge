@@ -7,7 +7,7 @@
 		Password
 		<input name="password" type="password" />
 	</label>
-	<p class="error">Password must be at least 6 characters long.</p>
+	<p class="error">Password must be at least 7 characters long.</p>
 	<button>Login</button>
 	<button formaction="?/signup">Sign up</button>
 </form>
